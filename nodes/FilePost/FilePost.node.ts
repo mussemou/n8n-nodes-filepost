@@ -120,8 +120,6 @@ export class FilePost implements INodeType {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 		const operation = this.getNodeParameter('operation', 0) as string;
-		const credentials = await this.getCredentials('filePostApi');
-		const apiKey = credentials.apiKey as string;
 		const baseUrl = 'https://filepost.dev/v1';
 
 		for (let i = 0; i < items.length; i++) {
@@ -131,62 +129,54 @@ export class FilePost implements INodeType {
 					const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
 					const buffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
 
-					const formData = {
-						file: {
-							value: buffer,
-							options: {
-								filename: binaryData.fileName || 'file',
-								contentType: binaryData.mimeType || 'application/octet-stream',
-							},
-						},
-					};
-
-					const response = await this.helpers.request({
+					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'POST',
 						url: `${baseUrl}/upload`,
-						headers: { 'X-API-Key': apiKey },
-						formData,
-						json: true,
+						body: {
+							file: {
+								value: buffer,
+								options: {
+									filename: binaryData.fileName || 'file',
+									contentType: binaryData.mimeType || 'application/octet-stream',
+								},
+							},
+						},
+						encoding: 'json',
 					});
 
-					returnData.push({ json: response });
+					returnData.push({ json: response as any });
 
 				} else if (operation === 'list') {
 					const page = this.getNodeParameter('page', i) as number;
 					const perPage = this.getNodeParameter('perPage', i) as number;
 
-					const response = await this.helpers.request({
+					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'GET',
-						url: `${baseUrl}/files?page=${page}&per_page=${perPage}`,
-						headers: { 'X-API-Key': apiKey },
-						json: true,
+						url: `${baseUrl}/files`,
+						qs: { page, per_page: perPage },
 					});
 
-					returnData.push({ json: response });
+					returnData.push({ json: response as any });
 
 				} else if (operation === 'get') {
 					const fileId = this.getNodeParameter('fileId', i) as string;
 
-					const response = await this.helpers.request({
+					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'GET',
 						url: `${baseUrl}/files/${fileId}`,
-						headers: { 'X-API-Key': apiKey },
-						json: true,
 					});
 
-					returnData.push({ json: response });
+					returnData.push({ json: response as any });
 
 				} else if (operation === 'delete') {
 					const fileId = this.getNodeParameter('fileId', i) as string;
 
-					const response = await this.helpers.request({
+					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'DELETE',
 						url: `${baseUrl}/files/${fileId}`,
-						headers: { 'X-API-Key': apiKey },
-						json: true,
 					});
 
-					returnData.push({ json: response });
+					returnData.push({ json: response as any });
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {

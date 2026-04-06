@@ -1,4 +1,8 @@
-import { ICredentialType, INodeProperties } from 'n8n-workflow';
+import {
+	IAuthenticateGeneric,
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class FilePostApi implements ICredentialType {
 	name = 'filePostApi';
@@ -15,4 +19,12 @@ export class FilePostApi implements ICredentialType {
 			description: 'Your FilePost API key. Get one free at filepost.dev',
 		},
 	];
+	authenticate: IAuthenticateGeneric = {
+		type: 'generic',
+		properties: {
+			headers: {
+				'X-API-Key': '={{$credentials.apiKey}}',
+			},
+		},
+	};
 }
