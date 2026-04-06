@@ -1,5 +1,6 @@
 import {
 	IAuthenticateGeneric,
+	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
@@ -25,6 +26,12 @@ export class FilePostApi implements ICredentialType {
 			headers: {
 				'X-API-Key': '={{$credentials.apiKey}}',
 			},
+		},
+	};
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: 'https://filepost.dev',
+			url: '/v1/account',
 		},
 	};
 }
