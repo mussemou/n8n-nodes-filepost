@@ -14,7 +14,7 @@ export class FilePost implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Upload files and get public URLs instantly',
+		description: 'Uploads files and returns public URLs',
 		defaults: {
 			name: 'FilePost',
 		},
@@ -36,26 +36,26 @@ export class FilePost implements INodeType {
 					{
 						name: 'Upload File',
 						value: 'upload',
-						description: 'Upload a file and get a public URL',
-						action: 'Upload a file',
+						description: 'Uploads a file and returns a public URL',
+						action: 'Upload file',
 					},
 					{
 						name: 'List Files',
 						value: 'list',
-						description: 'List your uploaded files',
+						description: 'Lists uploaded files',
 						action: 'List files',
 					},
 					{
 						name: 'Get File',
 						value: 'get',
-						description: 'Get details of a specific file',
+						description: 'Gets details for a specific file',
 						action: 'Get file details',
 					},
 					{
 						name: 'Delete File',
 						value: 'delete',
-						description: 'Delete a file',
-						action: 'Delete a file',
+						description: 'Deletes a file',
+						action: 'Delete file',
 					},
 				],
 				default: 'upload',
@@ -129,19 +129,21 @@ export class FilePost implements INodeType {
 					const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
 					const buffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
 
+					let fileName = binaryData.fileName;
+					const mimeType = binaryData.mimeType || 'application/octet-stream';
+					if (!fileName || !fileName.includes('.')) {
+						const ext = mimeType.split('/')[1]?.split(';')[0] || 'bin';
+						fileName = `upload.${ext}`;
+					}
+
+					const formData = new FormData();
+					formData.append('file', new Blob([new Uint8Array(buffer)], { type: mimeType }), fileName);
+
 					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'POST',
 						url: `${baseUrl}/upload`,
-						body: {
-							file: {
-								value: buffer,
-								options: {
-									filename: binaryData.fileName || 'file',
-									contentType: binaryData.mimeType || 'application/octet-stream',
-								},
-							},
-						},
-						encoding: 'json',
+						body: formData,
+						json: true,
 					});
 
 					returnData.push({ json: response as any });
@@ -154,6 +156,7 @@ export class FilePost implements INodeType {
 						method: 'GET',
 						url: `${baseUrl}/files`,
 						qs: { page, per_page: perPage },
+						json: true,
 					});
 
 					returnData.push({ json: response as any });
@@ -164,6 +167,7 @@ export class FilePost implements INodeType {
 					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'GET',
 						url: `${baseUrl}/files/${fileId}`,
+						json: true,
 					});
 
 					returnData.push({ json: response as any });
@@ -174,6 +178,7 @@ export class FilePost implements INodeType {
 					const response = await this.helpers.httpRequestWithAuthentication.call(this, 'filePostApi', {
 						method: 'DELETE',
 						url: `${baseUrl}/files/${fileId}`,
+						json: true,
 					});
 
 					returnData.push({ json: response as any });

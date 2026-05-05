@@ -61,9 +61,9 @@ npm install n8n-nodes-filepost
 
 | Plan | Price | Uploads/mo | Max File Size |
 |------|-------|-----------|---------------|
-| Free | $0 | 30 | 50MB |
-| Starter | $9/mo | 500 | 200MB |
-| Pro | $29/mo | 5,000 | 500MB |
+| Free | $0 | 300 | 50MB |
+| Starter | $9/mo | 5,000 | 200MB |
+| Pro | $29/mo | 25,000 | 500MB |
 
 ## Links
 

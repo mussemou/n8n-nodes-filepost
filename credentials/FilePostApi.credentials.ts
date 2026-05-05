@@ -30,8 +30,9 @@ export class FilePostApi implements ICredentialType {
 	};
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://filepost.dev',
-			url: '/v1/account',
+			baseURL: 'https://filepost.dev/v1',
+			url: '/account',
+			method: 'GET',
 		},
 	};
 }
