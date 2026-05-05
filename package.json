@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-filepost",
-  "version": "0.1.3",
-  "description": "n8n community node for FilePost - Upload files and get public URLs instantly",
+  "version": "0.1.5",
+  "description": "n8n community node for FilePost. Upload files and get public URLs instantly.",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mussemou/n8n-nodes-filepost.git"
+    "url": "git+https://github.com/mussemou/n8n-nodes-filepost.git"
   },
   "main": "index.js",
   "n8n": {
