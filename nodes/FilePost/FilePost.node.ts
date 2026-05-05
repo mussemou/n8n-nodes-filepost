@@ -3,7 +3,8 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeOperationError,
+	JsonObject,
+	NodeApiError,
 } from 'n8n-workflow';
 
 export class FilePost implements INodeType {
@@ -188,7 +189,7 @@ export class FilePost implements INodeType {
 					returnData.push({ json: { error: (error as Error).message } });
 					continue;
 				}
-				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
+				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 			}
 		}
 
