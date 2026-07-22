@@ -144,6 +144,7 @@ export class FilePost implements INodeType {
 						method: 'POST',
 						url: `${baseUrl}/upload`,
 						body: formData,
+						headers: { 'X-FilePost-Integration': 'n8n' },
 						json: true,
 					});
 
